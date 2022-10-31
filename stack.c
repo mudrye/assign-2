@@ -62,7 +62,7 @@ void stack_free(struct stack* stack) {
  *   stack - the stack whose emptiness is being questioned.  May not be NULL.
  */
 int stack_isempty(struct stack* stack) {
-  empty_val(stack->list);
+  return empty_val(stack->list);
 }
 
 /*

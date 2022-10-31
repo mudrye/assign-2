@@ -35,10 +35,8 @@ int get_user_str(char* dest, int n) {
 
 int main(int argc, char const *argv[]) {
   char* in = malloc(MAX_STR_LEN * sizeof(char));
-  char* in2 = malloc(MAX_STR_LEN * sizeof(char));
+  char* in2;
   struct queue* qu;
-  
-
   struct stack* stack;
   
 
@@ -66,39 +64,54 @@ int main(int argc, char const *argv[]) {
       
         // check for non letters and spaces
       if (isalpha(in2[i]) == 0){
-        for(int j = i; in2[j] != '\0'; j++){
-          in2[j] = in2[j+1];
-        }
-        i--;
+        // for(int j = i; in2[j] != '\0'; j++){
+        //   in2[j] = in2[j+1];
+        // }
+        // i--;
+        continue;
       }
       //check for uppercase
       in2[i] = tolower(in2[i]);
 
       //insert vals into the queue and stack      
       queue_enqueue(qu, &in2[i]);
+      // printf("insert: %s\n", queue_front(qu));
+      // printf("insert qu: %c\n", *(char*)queue_front(qu));
       stack_push(stack, &in2[i]);
+      // printf("Insert: %s\n", stack_top(stack));
+      // printf("insert stacl: %c\n", *(char*)stack_top(stack));
     }
-    for (int i = 0; in2[i] != '\0'; i++)
+    
+
+    // for (int i = 0; in2[i] != '\0'; i++)
+    while(stack_isempty(stack) == 0 && queue_isempty(qu) == 0)
     {
       char* dq = queue_dequeue(qu);
-      // printf("%c\n", dq[0]);
+      // printf("qu: %c\n", dq[0]);
       char* st = stack_pop(stack);
-      // printf("%c\n", st[0]);
+      // printf("stack: %c\n", st[0]);
       if(dq[0] != st[0]){
         printf("Not a palendrome:(\n");
+        queue_free(qu);
+        stack_free(stack);
+        free(in);
         return 0;
       }
     }
 
-    if(isalpha(in))
-    printf("%s is a palendrome!\n", in);
+    // if(isalpha(in)){
+      printf("%s is a palendrome!\n", in);
+      queue_free(qu);
+      stack_free(stack);
+      free(in);
+      return 0;
+      // break;
+    // }
     
   }
-
-  free(in);
-  free(in2);
-  free(qu);
-  free(stack);
+  
+  
+  
   
   
   
