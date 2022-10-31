@@ -16,6 +16,7 @@ struct dynarray {
   void** data;
   int size;
   int capacity;
+  int start;
 };
 
 #define DYNARRAY_INIT_CAPACITY 4
@@ -77,8 +78,9 @@ void _dynarray_resize(struct dynarray* da, int new_capacity) {
    * Copy data from the old array to the new one.
    */
   for (int i = 0; i < da->size; i++) {
-    new_data[i] = da->data[i];
+    new_data[i] = da->data[(i+da->start) % da->capacity];
   }
+  da->start = 0;
 
   /*
    * Put the new array into the dynarray struct.
@@ -110,7 +112,7 @@ void dynarray_insert(struct dynarray* da, void* val) {
   /*
    * Put the new element at the end of the array.
    */
-  da->data[da->size] = val;
+  da->data[(da->size + da->start)%da->capacity] = val;
   da->size++;
 }
 
@@ -125,17 +127,18 @@ void dynarray_insert(struct dynarray* da, void* val) {
  *     between 0 (inclusive) and n (exclusive), where n is the number of
  *     elements stored in the array.
  */
-void dynarray_remove(struct dynarray* da, int idx) {
+void dynarray_remove(struct dynarray* da) {
   assert(da);
-  assert(idx < da->size && idx >= 0);
+  // assert(idx < da->size && idx >= 0);
 
   /*
    * Move all elements behind the one being removed forward one index,
    * overwriting the element to be removed in the process.
    */
-  for (int i = idx; i < da->size - 1; i++) {
-    da->data[i] = da->data[i+1];
-  }
+  // for (int i = idx; i < da->size - 1; i++) {
+    da->data[da->start] = NULL;
+    da->start++;
+  // }
 
   da->size--;
 }
@@ -149,11 +152,11 @@ void dynarray_remove(struct dynarray* da, int idx) {
  *     of `idx` must be between 0 (inclusive) and n (exclusive), where n is the
  *     number of elements stored in the array.
  */
-void* dynarray_get(struct dynarray* da, int idx) {
+void* dynarray_get(struct dynarray* da) {
   assert(da);
-  assert(idx < da->size && idx >= 0);
+  // assert(idx < da->size && idx >= 0);
 
-  return da->data[idx];
+  return da->data[da->start];
 }
 
 /*
@@ -173,4 +176,11 @@ void dynarray_set(struct dynarray* da, int idx, void* val) {
   assert(idx < da->size && idx >= 0);
 
   da->data[idx] = val;
+}
+/*check to see if the array is NULL*/
+int checker(struct dynarray* da){
+  if(da->size == 0){
+    return 1;
+  }
+  return 0;
 }

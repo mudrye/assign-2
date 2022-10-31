@@ -199,3 +199,24 @@ void list_reverse(struct list* list) {
     curr = next;
   }
 }
+
+void* find_val(struct list* list){
+
+  return list->head->val;
+}
+
+void* head_remove(struct list* list){
+  struct link* curr = list->head;
+  int* val = list->head->val;
+  list->head = curr->next;
+  free(curr);
+  return val;
+}
+
+int empty_val(struct list* list){
+  if (list->head == NULL){
+    return 1;
+  }
+  else
+    return 0;
+}

@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+
 
 #include "queue.h"
 #include "stack.h"
@@ -23,6 +25,7 @@ int get_user_str(char* dest, int n) {
      *
      * https://en.cppreference.com/w/c/string/byte/strcspn
      */
+    
     dest[strcspn(dest, "\r\n")] = '\0';
     return 1;
   } else {
@@ -32,6 +35,12 @@ int get_user_str(char* dest, int n) {
 
 int main(int argc, char const *argv[]) {
   char* in = malloc(MAX_STR_LEN * sizeof(char));
+  char* in2 = malloc(MAX_STR_LEN * sizeof(char));
+  struct queue* qu;
+  
+
+  struct stack* stack;
+  
 
   while (get_user_str(in, MAX_STR_LEN)) {
     /*
@@ -47,9 +56,52 @@ int main(int argc, char const *argv[]) {
      * etc.), and you should ignore the case of letters (e.g. the characters
      * 'a' and 'A' should be considered as equal).  The C functions isalpha()
      * and tolower() from ctype.h might help with this.
+     * https://www.geeksforgeeks.org/isalpha-isdigit-functions-c-example/
      */
+    in2 = in;
+    qu = queue_create();
+    stack = stack_create();
+    for (int i = 0; in2[i] != '\0'; i++)
+    {
+      
+        // check for non letters and spaces
+      if (isalpha(in2[i]) == 0){
+        for(int j = i; in2[j] != '\0'; j++){
+          in2[j] = in2[j+1];
+        }
+        i--;
+      }
+      //check for uppercase
+      in2[i] = tolower(in2[i]);
+
+      //insert vals into the queue and stack      
+      queue_enqueue(qu, &in2[i]);
+      stack_push(stack, &in2[i]);
+    }
+    for (int i = 0; in2[i] != '\0'; i++)
+    {
+      char* dq = queue_dequeue(qu);
+      // printf("%c\n", dq[0]);
+      char* st = stack_pop(stack);
+      // printf("%c\n", st[0]);
+      if(dq[0] != st[0]){
+        printf("Not a palendrome:(\n");
+        return 0;
+      }
+    }
+
+    if(isalpha(in))
+    printf("%s is a palendrome!\n", in);
+    
   }
 
   free(in);
+  free(in2);
+  free(qu);
+  free(stack);
+  
+  
+  
+
   return 0;
 }
